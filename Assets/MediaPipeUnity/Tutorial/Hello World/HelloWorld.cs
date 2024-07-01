@@ -22,7 +22,7 @@ namespace Mediapipe.Unity.Tutorial
         }
       ";
 
-      var graph = new CalculatorGraph("configText");
+      var graph = new CalculatorGraph(configText);
       var poller = graph.AddOutputStreamPoller<string>("out");
       graph.StartRun();
 
