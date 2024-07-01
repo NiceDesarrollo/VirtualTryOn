@@ -105,14 +105,6 @@ namespace Mediapipe.Unity.Sample.HandTracking
       _handRectsFromLandmarksAnnotationController.DrawNow(result.handRectsFromLandmarks);
     }
 
-    // Define a struct to match the JSON structure
-    [System.Serializable]
-    public struct NormalizedLandmark
-    {
-      public float x;
-      public float y;
-      public float z;
-    }
 
     private void OnHandLandmarksOutput(object stream, OutputStream<List<NormalizedLandmarkList>>.OutputEventArgs eventArgs)
     {
