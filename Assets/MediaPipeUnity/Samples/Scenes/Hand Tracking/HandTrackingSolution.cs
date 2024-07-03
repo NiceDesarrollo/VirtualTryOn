@@ -5,6 +5,8 @@
 // https://opensource.org/licenses/MIT.
 
 using Mediapipe.Tasks.Components.Containers;
+using Mediapipe.Tasks.Vision.HandLandmarker;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +25,10 @@ namespace Mediapipe.Unity.Sample.HandTracking
 
 
     [SerializeField] private NormalizedRectListAnnotationController _handRectsFromLandmarksAnnotationController;
+
+    // Create a public event to notify when new landmarks are available
+    public event Action<List<NormalizedLandmarkList>, NormalizedLandmark> OnHandLandmarksOutputEvent;
+
 
     public HandTrackingGraph.ModelComplexity modelComplexity
     {
@@ -106,29 +112,30 @@ namespace Mediapipe.Unity.Sample.HandTracking
     }
 
 
+
     private void OnHandLandmarksOutput(object stream, OutputStream<List<NormalizedLandmarkList>>.OutputEventArgs eventArgs)
     {
-      var packet = eventArgs.packet;
 
+      var packet = eventArgs.packet;
 
       var value = packet == null ? default : packet.Get(NormalizedLandmarkList.Parser);
 
       //Get the land marks coordinates
       if (value != null)
       {
-        // Access individual landmarks within the list
-        foreach (var landmarkList in value)
-        {
-          // Now iterate through the landmarks within each NormalizedLandmarkList
-          foreach (var landmark in landmarkList.Landmark)
-          {
-            Debug.Log($"Landmark X: {landmark.X}, Landmark Y: {landmark.Y}, Landmark Z: {landmark.Z} ");
-          }
-        }
+
+        var ringFingerBaseLandmark = value[0].Landmark[12];
+
+        OnHandLandmarksOutputEvent?.Invoke(value, ringFingerBaseLandmark);
+
       }
 
       _handLandmarksAnnotationController.DrawLater(value);
     }
+
+
+
+
 
     private void OnHandednessOutput(object stream, OutputStream<List<ClassificationList>>.OutputEventArgs eventArgs)
     {
@@ -153,8 +160,6 @@ namespace Mediapipe.Unity.Sample.HandTracking
       _handRectsFromPalmDetectionsAnnotationController.DrawLater(value);
     }
 
-
-
     private void OnHandRectsFromLandmarksOutput(object stream, OutputStream<List<NormalizedRect>>.OutputEventArgs eventArgs)
     {
       var packet = eventArgs.packet;
@@ -162,6 +167,5 @@ namespace Mediapipe.Unity.Sample.HandTracking
       _handRectsFromLandmarksAnnotationController.DrawLater(value);
     }
 
-    
   }
 }

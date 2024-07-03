@@ -1,3 +1,4 @@
+
 // Copyright (c) 2021 homuler
 //
 // Use of this source code is governed by an MIT-style
@@ -100,6 +101,7 @@ namespace Mediapipe.Unity.Sample
 
     protected virtual void Start()
     {
+
       _InstanceTable.Add(GetInstanceID(), this);
     }
 

@@ -4,7 +4,6 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-using Google.Protobuf.WellKnownTypes;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,8 +25,6 @@ namespace Mediapipe.Unity
 
     public void DrawLater(IReadOnlyList<NormalizedLandmarkList> handLandmarkLists)
     {
-      Debug.Log($"Resultx: {handLandmarkLists}");
-
       UpdateCurrentTarget(handLandmarkLists, ref _currentHandLandmarkLists);
     }
 
