@@ -120,12 +120,6 @@ namespace Mediapipe.Unity.Sample.HandTracking
 
     public override void StartRun(ImageSource imageSource)
     {
-      bool isMainThread = !System.Threading.Thread.CurrentThread.IsBackground;
-
-      if (isMainThread)
-      {
-        Debug.Log("You are on the main thread!");
-      }
       if (runningMode.IsSynchronous())
       {
         _palmDetectionsStream.StartPolling();

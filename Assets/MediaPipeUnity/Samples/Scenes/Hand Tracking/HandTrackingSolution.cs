@@ -124,7 +124,7 @@ namespace Mediapipe.Unity.Sample.HandTracking
       if (value != null)
       {
 
-        var ringFingerBaseLandmark = value[0].Landmark[12];
+        var ringFingerBaseLandmark = value[0].Landmark[14];
 
         OnHandLandmarksOutputEvent?.Invoke(value, ringFingerBaseLandmark);
 

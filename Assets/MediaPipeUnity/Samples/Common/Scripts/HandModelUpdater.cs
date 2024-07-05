@@ -1,15 +1,21 @@
+using Mediapipe.Unity.CoordinateSystem; // Import the RealWorldCoordinate class
 using Mediapipe.Unity.Sample.HandTracking;
-using Mediapipe; // Import for Mediapipe types (if needed)
-using System.Collections.Generic; // Import for List<T>
-using UnityEngine; // Import for MonoBehaviour, Debug.Log, etc.
+using Mediapipe;
+using System.Collections.Generic;
+using UnityEngine;
+using Mediapipe.Unity;
+using Color = UnityEngine.Color;
 
 public class EventTest : MonoBehaviour
 {
   public HandTrackingSolution handTrackingSolution;
-  private Vector3 targetPosition; // Store the new position
-  private bool positionUpdated = false; // Flag to signal position change
+  private Vector3 _targetPosition;
+  private bool _positionUpdated = false;
 
-  void Start()
+  public bool isMirrored = false; // Set to true if your camera is mirrored
+
+
+  private void Start()
   {
     if (handTrackingSolution != null)
     {
@@ -17,26 +23,63 @@ public class EventTest : MonoBehaviour
     }
   }
 
-  // Event handler method 
   private void HandleNewLandmarks(List<NormalizedLandmarkList> landmarks, NormalizedLandmark ringFingerLandmark)
   {
-    if (landmarks == null || landmarks.Count == 0 || ringFingerLandmark == null)
+    if (landmarks == null || landmarks.Count == 0)
     {
       return;
     }
 
-    // **Safely update the position**
-    targetPosition = new Vector3(ringFingerLandmark.X, ringFingerLandmark.Y, ringFingerLandmark.Z);
-    positionUpdated = true;
+    //NormalizedLandmark targetLandmark = landmarks[0].Landmark[14];
+
+    // Get landmarks 14 and 13
+    var landmark14 = landmarks[0].Landmark[14];
+    var landmark13 = landmarks[0].Landmark[13];
+
+    // Calculate the midpoint
+    var midX = (landmark14.X + landmark13.X) / 2f;
+    var midY = (landmark14.Y + landmark13.Y) / 2f;
+    var midZ = (landmark14.Z + landmark13.Z) / 2f;
+
+    // Create a new NormalizedLandmark for the midpoint
+    var midPoint = new NormalizedLandmark
+    {
+      X = midX,
+      Y = midY,
+      Z = midZ
+    };
+
+    //ImageToLocalPoint:
+    var imageWidth = UnityEngine.Screen.width;
+    var imageHeight = UnityEngine.Screen.height;
+    var xMin = -30f;
+    var xMax = 30f;
+    var yMin = -50f;
+    var yMax = 50f;
+
+    // Invert the X-coordinate
+    var invertedMidX = 1f - midPoint.X;
+
+    // Use ImageToLocalPoint for positioning
+    _targetPosition = ImageCoordinate.ImageToLocalPoint(
+        (int)(invertedMidX * imageWidth), // Convert normalized X to pixel coordinates
+        (int)(midPoint.Y * imageHeight), // Convert normalized Y to pixel coordinates
+        (int)(midPoint.Z * 100), // Scale Z appropriately (adjust the multiplier as needed)
+        xMin, xMax, yMin, yMax,
+        imageWidth, imageHeight, RotationAngle.Rotation0, isMirrored);
+
+    _positionUpdated = true;
   }
 
-  void Update()
+  private void Update()
   {
-    // Apply the position change on the main thread
-    if (positionUpdated)
+    if (_positionUpdated)
     {
-      transform.position = targetPosition;
-      positionUpdated = false;
+      transform.position = _targetPosition;
+      _positionUpdated = false;
+
     }
   }
 }
+
+

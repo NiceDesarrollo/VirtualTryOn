@@ -16,7 +16,7 @@ namespace Mediapipe.Unity
   {
     [SerializeField] private LineRenderer _lineRenderer;
     [SerializeField] private Color _color = Color.green;
-    [SerializeField, Range(0, 1)] private float _lineWidth = 1.0f;
+    [SerializeField, Range(0, 1)] private float _lineWidth = 10.0f;
 
     private void OnEnable()
     {
